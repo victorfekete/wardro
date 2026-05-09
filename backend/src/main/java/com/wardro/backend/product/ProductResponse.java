@@ -11,6 +11,8 @@ public record ProductResponse(
         String color,
         String size,
         Integer stock,
-        String imageUrl
+        String imageUrl,
+        Long categoryId,
+        String categoryName
 ) {
 }

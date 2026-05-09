@@ -1,5 +1,6 @@
 package com.wardro.backend.product;
 
+import com.wardro.backend.category.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -42,4 +43,9 @@ public class Product {
     private Integer stock;
 
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
 }

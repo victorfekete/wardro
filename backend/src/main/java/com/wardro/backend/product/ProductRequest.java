@@ -12,6 +12,7 @@ public record ProductRequest(
         @NotBlank String color,
         @NotBlank String size,
         @NotNull @Min(0) Integer stock,
-        String imageUrl
+        String imageUrl,
+        @NotNull Long categoryId
 ) {
 }
