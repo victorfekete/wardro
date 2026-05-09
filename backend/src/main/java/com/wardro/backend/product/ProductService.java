@@ -3,7 +3,8 @@ package com.wardro.backend.product;
 import com.wardro.backend.category.Category;
 import com.wardro.backend.category.CategoryService;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.domain.Specification;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -20,8 +21,24 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
+    public List<ProductResponse> getAllProducts(
+            String search,
+            Long categoryId,
+            String color,
+            String size,
+            BigDecimal minPrice,
+            BigDecimal maxPrice
+    ) {
+        Specification<Product> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        spec = spec.and(ProductSpecification.hasSearch(search));
+        spec = spec.and(ProductSpecification.hasCategory(categoryId));
+        spec = spec.and(ProductSpecification.hasColor(color));
+        spec = spec.and(ProductSpecification.hasSize(size));
+        spec = spec.and(ProductSpecification.priceGreaterThanOrEqual(minPrice));
+        spec = spec.and(ProductSpecification.priceLessThanOrEqual(maxPrice));
+
+        return productRepository.findAll(spec)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

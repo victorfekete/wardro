@@ -2,7 +2,7 @@ package com.wardro.backend.product;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -16,8 +16,22 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts() {
-        return productService.getAllProducts();
+    public List<ProductResponse> getAllProducts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) String size,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        return productService.getAllProducts(
+                search,
+                categoryId,
+                color,
+                size,
+                minPrice,
+                maxPrice
+        );
     }
 
     @GetMapping("/{id}")
