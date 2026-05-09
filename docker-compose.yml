@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: wardro-postgres
+    environment:
+      POSTGRES_DB: wardrodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - wardro_data:/var/lib/postgresql/data
+
+volumes:
+  wardro_data:
