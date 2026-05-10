@@ -16,13 +16,17 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts(
+    public ProductPageResponse getAllProducts(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String color,
             @RequestParam(required = false) String size,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
         return productService.getAllProducts(
                 search,
@@ -30,7 +34,11 @@ public class ProductController {
                 color,
                 size,
                 minPrice,
-                maxPrice
+                maxPrice,
+                page,
+                pageSize,
+                sortBy,
+                sortDirection
         );
     }
 

@@ -4,6 +4,11 @@ import com.wardro.backend.category.Category;
 import com.wardro.backend.category.CategoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -21,13 +26,17 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
-    public List<ProductResponse> getAllProducts(
+    public ProductPageResponse getAllProducts(
             String search,
             Long categoryId,
             String color,
             String size,
             BigDecimal minPrice,
-            BigDecimal maxPrice
+            BigDecimal maxPrice,
+            int page,
+            int pageSize,
+            String sortBy,
+            String sortDirection
     ) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
@@ -38,10 +47,38 @@ public class ProductService {
         spec = spec.and(ProductSpecification.priceGreaterThanOrEqual(minPrice));
         spec = spec.and(ProductSpecification.priceLessThanOrEqual(maxPrice));
 
-        return productRepository.findAll(spec)
+        Sort sort = createSort(sortBy, sortDirection);
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+        Page<Product> productPage = productRepository.findAll(spec, pageable);
+
+        List<ProductResponse> content = productPage.getContent()
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+
+        return new ProductPageResponse(
+                content,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.isLast()
+        );
+    }
+
+    private Sort createSort(String sortBy, String sortDirection) {
+        String safeSortBy = switch (sortBy) {
+            case "name", "price", "brand", "color", "size", "stock" -> sortBy;
+            default -> "id";
+        };
+
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        return Sort.by(direction, safeSortBy);
     }
 
     public ProductResponse getProductById(Long id) {
