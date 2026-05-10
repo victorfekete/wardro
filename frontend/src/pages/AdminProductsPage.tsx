@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { createProduct, deleteProduct, getProducts } from "../api/productApi"
+import {
+  createProduct,
+  deleteProduct,
+  getProducts,
+  updateProduct,
+} from "../api/productApi"
 import { getCategories } from "../api/categoryApi"
 import type { Product } from "../types/Product"
 import type { Category } from "../types/Category"
@@ -33,7 +38,7 @@ function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [form, setForm] = useState<ProductFormState>(initialFormState)
-
+const [editingProductId, setEditingProductId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -71,7 +76,7 @@ function AdminProductsPage() {
     }))
   }
 
-  async function handleCreateProduct(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmitProduct(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     if (!form.categoryId) {
@@ -83,7 +88,7 @@ function AdminProductsPage() {
       setSaving(true)
       setError(null)
 
-      const createdProduct = await createProduct({
+      const productRequest = {
         name: form.name,
         description: form.description,
         price: Number(form.price),
@@ -93,12 +98,31 @@ function AdminProductsPage() {
         stock: Number(form.stock),
         imageUrl: form.imageUrl,
         categoryId: Number(form.categoryId),
-      })
+      }
 
-      setProducts((currentProducts) => [...currentProducts, createdProduct])
+      if (editingProductId) {
+        const updatedProduct = await updateProduct(editingProductId, productRequest)
+
+        setProducts((currentProducts) =>
+          currentProducts.map((product) =>
+            product.id === editingProductId ? updatedProduct : product
+          )
+        )
+
+        setEditingProductId(null)
+      } else {
+        const createdProduct = await createProduct(productRequest)
+
+        setProducts((currentProducts) => [...currentProducts, createdProduct])
+      }
+
       setForm(initialFormState)
     } catch {
-      setError("Could not create product.")
+      setError(
+        editingProductId
+          ? "Could not update product."
+          : "Could not create product."
+      )
     } finally {
       setSaving(false)
     }
@@ -121,6 +145,32 @@ function AdminProductsPage() {
       setError("Could not delete product.")
     }
   }
+
+    function handleEditProduct(product: Product) {
+      setEditingProductId(product.id)
+
+      setForm({
+        name: product.name,
+        description: product.description,
+        price: String(product.price),
+        brand: product.brand,
+        color: product.color,
+        size: product.size,
+        stock: String(product.stock),
+        imageUrl: product.imageUrl,
+        categoryId: String(product.categoryId),
+      })
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+    }
+
+    function handleCancelEdit() {
+      setEditingProductId(null)
+      setForm(initialFormState)
+    }
 
   if (loading) {
     return (
@@ -171,10 +221,11 @@ function AdminProductsPage() {
 
         <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
           <section className="h-fit rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <h2 className="text-xl font-semibold">Add product</h2>
+            <h2 className="text-xl font-semibold">
+              {editingProductId ? "Edit product" : "Add product"}
+            </h2>
 
-            <form onSubmit={handleCreateProduct} className="mt-6 space-y-4">
-              <div>
+                <form onSubmit={handleSubmitProduct} className="mt-6 space-y-4">              <div>
                 <label className="text-sm text-neutral-400">Name</label>
                 <input
                   name="name"
@@ -295,8 +346,21 @@ function AdminProductsPage() {
                 disabled={saving}
                 className="w-full rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving ? "Saving..." : "Add product"}
+                {saving
+                  ? "Saving..."
+                  : editingProductId
+                    ? "Update product"
+                    : "Add product"}
               </button>
+              {editingProductId && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="w-full rounded-xl border border-neutral-700 px-4 py-3 font-semibold text-neutral-300 hover:bg-neutral-800"
+                >
+                  Cancel edit
+                </button>
+              )}
             </form>
           </section>
 
@@ -358,12 +422,21 @@ function AdminProductsPage() {
                       </td>
 
                       <td className="py-4 pr-4 text-right">
-                        <button
-                          onClick={() => handleDeleteProduct(product.id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex justify-end gap-3">
+                          <button
+                            onClick={() => handleEditProduct(product)}
+                            className="text-neutral-300 hover:text-white"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -380,5 +453,7 @@ function AdminProductsPage() {
     </main>
   )
 }
+
+
 
 export default AdminProductsPage

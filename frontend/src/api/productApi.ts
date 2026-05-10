@@ -55,6 +55,25 @@ export async function createProduct(
   return response.json()
 }
 
+export async function updateProduct(
+  productId: number,
+  productRequest: CreateProductRequest
+): Promise<Product> {
+  const response = await fetch(`${API_URL}/products/${productId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(productRequest),
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to update product")
+  }
+
+  return response.json()
+}
+
 export async function deleteProduct(productId: number): Promise<void> {
   const response = await fetch(`${API_URL}/products/${productId}`, {
     method: "DELETE",
