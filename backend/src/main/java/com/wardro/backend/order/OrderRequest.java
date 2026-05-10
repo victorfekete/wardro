@@ -1,4 +1,11 @@
 package com.wardro.backend.order;
 
-public class OrderRequest {
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+
+import java.util.List;
+
+public record OrderRequest(
+        @NotEmpty List<@Valid OrderItemRequest> items
+) {
 }

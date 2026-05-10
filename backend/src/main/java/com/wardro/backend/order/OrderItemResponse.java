@@ -1,4 +1,12 @@
 package com.wardro.backend.order;
 
-public class OrderItemResponse {
+import java.math.BigDecimal;
+
+public record OrderItemResponse(
+        Long productId,
+        String productName,
+        Integer quantity,
+        BigDecimal priceAtPurchase,
+        BigDecimal subtotal
+) {
 }

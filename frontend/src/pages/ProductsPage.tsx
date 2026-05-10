@@ -58,12 +58,21 @@ function ProductsPage() {
             </p>
           </div>
 
-          <Link
-            to="/cart"
-            className="rounded-xl bg-white px-4 py-2 font-medium text-neutral-950 hover:bg-neutral-200"
-          >
-            Cart
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              to="/admin/orders"
+              className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+            >
+              Admin
+            </Link>
+
+            <Link
+              to="/cart"
+              className="rounded-xl bg-white px-4 py-2 font-medium text-neutral-950 hover:bg-neutral-200"
+            >
+              Cart
+            </Link>
+          </div>
         </div>
 
         {products.length === 0 ? (
