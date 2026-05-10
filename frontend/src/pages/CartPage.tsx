@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import type { CartItem } from "../types/CartItem"
+import { createOrder } from "../api/orderApi"
+import { clearCart } from "../utils/cartStorage"
 import {
   getCartItems,
   removeProductFromCart,
@@ -9,6 +11,9 @@ import {
 
 function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+   const [checkoutLoading, setCheckoutLoading] = useState(false)
+   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+   const navigate = useNavigate()
 
   useEffect(() => {
     setCartItems(getCartItems())
@@ -28,6 +33,35 @@ function CartPage() {
     updateCartItemQuantity(productId, quantity)
     setCartItems(getCartItems())
   }
+
+   async function handleCheckout() {
+     if (cartItems.length === 0) {
+       return
+     }
+
+     setCheckoutLoading(true)
+     setCheckoutError(null)
+
+     try {
+       const orderRequest = {
+         items: cartItems.map((item) => ({
+           productId: item.product.id,
+           quantity: item.quantity,
+         })),
+       }
+
+       const createdOrder = await createOrder(orderRequest)
+
+       clearCart()
+       setCartItems([])
+
+       navigate(`/orders/${createdOrder.id}`)
+     } catch {
+       setCheckoutError("Could not create order. Please try again.")
+     } finally {
+       setCheckoutLoading(false)
+     }
+   }
 
   if (cartItems.length === 0) {
     return (
@@ -170,8 +204,16 @@ function CartPage() {
               </div>
             </div>
 
-            <button className="mt-6 w-full rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 hover:bg-neutral-200">
-              Proceed to checkout
+            {checkoutError && (
+              <p className="mt-4 text-sm text-red-400">{checkoutError}</p>
+            )}
+
+            <button
+              onClick={handleCheckout}
+              disabled={checkoutLoading}
+              className="mt-6 w-full rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {checkoutLoading ? "Creating order..." : "Proceed to checkout"}
             </button>
           </aside>
         </div>
