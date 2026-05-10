@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { getProductById } from "../api/productApi"
 import type { Product } from "../types/Product"
+import { addProductToCart } from "../utils/cartStorage"
 
 function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -29,6 +30,15 @@ function ProductDetailsPage() {
       })
   }, [id])
 
+
+    function handleAddToCart() {
+        if (!product) {
+            return
+        }
+
+    addProductToCart(product)
+    alert("Product added to cart.")
+  }
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
@@ -42,12 +52,21 @@ function ProductDetailsPage() {
       <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 text-white">
         <p className="text-red-400">{error ?? "Product not found."}</p>
 
-        <Link
-          to="/products"
-          className="mt-4 rounded-xl bg-white px-4 py-2 font-medium text-neutral-950 hover:bg-neutral-200"
-        >
-          Back to products
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link
+            to="/products"
+            className="text-sm text-neutral-400 hover:text-white"
+          >
+            ← Back to products
+          </Link>
+
+          <Link
+            to="/cart"
+            className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-neutral-950 hover:bg-neutral-200"
+          >
+            Cart
+          </Link>
+        </div>
       </div>
     )
   }
@@ -108,7 +127,10 @@ function ProductDetailsPage() {
               </div>
             </div>
 
-            <button className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-neutral-950 hover:bg-neutral-200">
+            <button
+              onClick={handleAddToCart}
+              className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-neutral-950 hover:bg-neutral-200"
+            >
               Add to Cart
             </button>
           </section>
