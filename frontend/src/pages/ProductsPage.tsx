@@ -60,10 +60,17 @@ function ProductsPage() {
 
           <div className="flex gap-3">
             <Link
+              to="/admin/products"
+              className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+            >
+              Admin Products
+            </Link>
+
+            <Link
               to="/admin/orders"
               className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
             >
-              Admin
+              Admin Orders
             </Link>
 
             <Link
