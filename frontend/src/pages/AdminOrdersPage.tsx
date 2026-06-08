@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { getOrders, updateOrderStatus } from "../api/orderApi"
 import type { OrderResponse } from "../types/Order"
+import { isAdmin } from "../utils/authStorage"
 
 const ORDER_STATUSES: OrderResponse["status"][] = [
   "PENDING",
@@ -50,6 +51,23 @@ function AdminOrdersPage() {
       setUpdatingOrderId(null)
     }
   }
+
+if (!isAdmin()) {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 px-6 text-white">
+      <h1 className="text-3xl font-bold">Access denied</h1>
+      <p className="mt-3 text-neutral-400">
+        You need an admin account to access this page.
+      </p>
+      <Link
+        to="/login"
+        className="mt-6 rounded-xl bg-white px-5 py-3 font-medium text-neutral-950 hover:bg-neutral-200"
+      >
+        Login as admin
+      </Link>
+    </main>
+  )
+}
 
   if (loading) {
     return (

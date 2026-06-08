@@ -53,8 +53,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/orders").authenticated()
                         .requestMatchers("/api/auth/me").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/api/orders").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
@@ -63,9 +67,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.GET, "/api/orders/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

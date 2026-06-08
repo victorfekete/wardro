@@ -5,6 +5,7 @@ import { getProducts } from "../api/productApi"
 import ProductCard from "../components/ProductCard"
 import type { Category } from "../types/Category"
 import type { Product } from "../types/Product"
+import { getAuthUser, clearAuthData } from "../utils/authStorage"
 
 type FilterState = {
   search: string
@@ -28,6 +29,8 @@ const initialFilters: FilterState = {
   sortDirection: "asc",
 }
 
+
+
 function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -36,6 +39,8 @@ function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const authUser = getAuthUser()
 
   useEffect(() => {
     loadInitialData()
@@ -138,20 +143,24 @@ function ProductsPage() {
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <Link
-              to="/admin/products"
-              className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
-            >
-              Admin Products
-            </Link>
+          <div className="flex flex-wrap gap-3">
+            {authUser?.role === "ADMIN" && (
+              <>
+                <Link
+                  to="/admin/products"
+                  className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+                >
+                  Admin Products
+                </Link>
 
-            <Link
-              to="/admin/orders"
-              className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
-            >
-              Admin Orders
-            </Link>
+                <Link
+                  to="/admin/orders"
+                  className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+                >
+                  Admin Orders
+                </Link>
+              </>
+            )}
 
             <Link
               to="/cart"
@@ -159,6 +168,26 @@ function ProductsPage() {
             >
               Cart
             </Link>
+
+            {authUser ? (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAuthData()
+                  window.location.reload()
+                }}
+                className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
 

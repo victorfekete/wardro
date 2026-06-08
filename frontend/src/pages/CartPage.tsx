@@ -8,6 +8,8 @@ import {
   removeProductFromCart,
   updateCartItemQuantity,
 } from "../utils/cartStorage"
+import { isAuthenticated } from "../utils/authStorage"
+
 
 function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -39,8 +41,15 @@ function CartPage() {
        return
      }
 
+     if (!isAuthenticated()) {
+         navigate("/login")
+         return
+     }
+
      setCheckoutLoading(true)
      setCheckoutError(null)
+
+
 
      try {
        const orderRequest = {

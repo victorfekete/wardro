@@ -83,10 +83,13 @@ export async function getProductById(id: string): Promise<Product> {
 export async function createProduct(
   productRequest: CreateProductRequest
 ): Promise<Product> {
+  const token = getAuthToken()
+
   const response = await fetch(`${API_URL}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(productRequest),
   })
@@ -102,10 +105,13 @@ export async function updateProduct(
   productId: number,
   productRequest: CreateProductRequest
 ): Promise<Product> {
+  const token = getAuthToken()
+
   const response = await fetch(`${API_URL}/products/${productId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(productRequest),
   })
@@ -118,8 +124,13 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(productId: number): Promise<void> {
+  const token = getAuthToken()
+
   const response = await fetch(`${API_URL}/products/${productId}`, {
     method: "DELETE",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   })
 
   if (!response.ok) {

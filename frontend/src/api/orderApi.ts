@@ -1,14 +1,18 @@
 import type { OrderRequest, OrderResponse } from "../types/Order"
+import { getAuthToken } from "../utils/authStorage"
 
 const API_URL = "http://localhost:8080/api"
 
 export async function createOrder(
   orderRequest: OrderRequest
 ): Promise<OrderResponse> {
+  const token = getAuthToken()
+
   const response = await fetch(`${API_URL}/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(orderRequest),
   })
@@ -21,7 +25,13 @@ export async function createOrder(
 }
 
 export async function getOrderById(id: string): Promise<OrderResponse> {
-  const response = await fetch(`${API_URL}/orders/${id}`)
+  const token = getAuthToken()
+
+  const response = await fetch(`${API_URL}/orders/${id}`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
 
   if (!response.ok) {
     throw new Error("Failed to fetch order")
@@ -31,7 +41,13 @@ export async function getOrderById(id: string): Promise<OrderResponse> {
 }
 
 export async function getOrders(): Promise<OrderResponse[]> {
-  const response = await fetch(`${API_URL}/orders`)
+  const token = getAuthToken()
+
+  const response = await fetch(`${API_URL}/orders`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
 
   if (!response.ok) {
     throw new Error("Failed to fetch orders")
@@ -44,9 +60,17 @@ export async function updateOrderStatus(
   orderId: number,
   status: OrderResponse["status"]
 ): Promise<OrderResponse> {
-  const response = await fetch(`${API_URL}/orders/${orderId}/status?status=${status}`, {
-    method: "PUT",
-  })
+  const token = getAuthToken()
+
+  const response = await fetch(
+    `${API_URL}/orders/${orderId}/status?status=${status}`,
+    {
+      method: "PUT",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    }
+  )
 
   if (!response.ok) {
     throw new Error("Failed to update order status")
