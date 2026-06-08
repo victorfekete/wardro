@@ -15,10 +15,53 @@ export type CreateProductRequest = {
   categoryId: number
 }
 
-export async function getProducts(): Promise<ProductPage> {
-  const response = await fetch(
-    `${API_URL}/products?page=0&pageSize=50&sortBy=id&sortDirection=asc`
-  )
+export type ProductFilters = {
+  search?: string
+  categoryId?: string
+  color?: string
+  size?: string
+  minPrice?: string
+  maxPrice?: string
+  sortBy?: string
+  sortDirection?: string
+}
+
+export async function getProducts(
+  filters: ProductFilters = {}
+): Promise<ProductPage> {
+  const params = new URLSearchParams()
+
+  params.set("page", "0")
+  params.set("pageSize", "50")
+
+  if (filters.search) {
+    params.set("search", filters.search)
+  }
+
+  if (filters.categoryId) {
+    params.set("categoryId", filters.categoryId)
+  }
+
+  if (filters.color) {
+    params.set("color", filters.color)
+  }
+
+  if (filters.size) {
+    params.set("size", filters.size)
+  }
+
+  if (filters.minPrice) {
+    params.set("minPrice", filters.minPrice)
+  }
+
+  if (filters.maxPrice) {
+    params.set("maxPrice", filters.maxPrice)
+  }
+
+  params.set("sortBy", filters.sortBy || "id")
+  params.set("sortDirection", filters.sortDirection || "asc")
+
+  const response = await fetch(`${API_URL}/products?${params.toString()}`)
 
   if (!response.ok) {
     throw new Error("Failed to fetch products")
