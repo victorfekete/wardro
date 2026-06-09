@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import com.wardro.backend.auth.AppUser;
 
 @Service
 public class OrderService {
@@ -35,11 +36,13 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest request) {
+    public OrderResponse createOrder(OrderRequest request, AppUser user) {
         Order order = Order.builder()
                 .status(OrderStatus.PENDING)
                 .totalPrice(BigDecimal.ZERO)
+                .user(user)
                 .build();
+
 
         List<OrderItem> orderItems = request.items()
                 .stream()
@@ -67,6 +70,13 @@ public class OrderService {
         Order updatedOrder = orderRepository.save(order);
 
         return mapToResponse(updatedOrder);
+    }
+
+    public List<OrderResponse> getMyOrders(AppUser user) {
+        return orderRepository.findByUserOrderByCreatedAtDesc(user)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private OrderItem createOrderItem(Order order, OrderItemRequest itemRequest) {
@@ -104,6 +114,9 @@ public class OrderService {
                 order.getTotalPrice(),
                 order.getStatus(),
                 order.getCreatedAt(),
+                order.getUser() != null ? order.getUser().getId() : null,
+                order.getUser() != null ? order.getUser().getFullName() : null,
+                order.getUser() != null ? order.getUser().getEmail() : null,
                 items
         );
     }

@@ -9,6 +9,9 @@ public record OrderResponse(
         BigDecimal totalPrice,
         OrderStatus status,
         LocalDateTime createdAt,
+        Long userId,
+        String customerName,
+        String customerEmail,
         List<OrderItemResponse> items
 ) {
 }

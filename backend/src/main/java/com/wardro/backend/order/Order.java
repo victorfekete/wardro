@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.wardro.backend.auth.AppUser;
+
 
 @Entity
 @Table(name = "orders")
@@ -34,6 +36,10 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     @PrePersist
     public void onCreate() {

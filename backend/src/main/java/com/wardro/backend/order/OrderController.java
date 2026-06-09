@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.wardro.backend.auth.AppUser;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -20,14 +22,26 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    @GetMapping("/my")
+    public List<OrderResponse> getMyOrders(Authentication authentication) {
+        AppUser user = (AppUser) authentication.getPrincipal();
+
+        return orderService.getMyOrders(user);
+    }
+
     @GetMapping("/{id}")
     public OrderResponse getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
 
     @PostMapping
-    public OrderResponse createOrder(@Valid @RequestBody OrderRequest request) {
-        return orderService.createOrder(request);
+    public OrderResponse createOrder(
+            @Valid @RequestBody OrderRequest request,
+            Authentication authentication
+    ) {
+        AppUser user = (AppUser) authentication.getPrincipal();
+
+        return orderService.createOrder(request, user);
     }
 
     @PutMapping("/{id}/status")

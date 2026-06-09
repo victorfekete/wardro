@@ -78,3 +78,19 @@ export async function updateOrderStatus(
 
   return response.json()
 }
+
+export async function getMyOrders(): Promise<OrderResponse[]> {
+  const token = getAuthToken()
+
+  const response = await fetch(`${API_URL}/orders/my`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch my orders")
+  }
+
+  return response.json()
+}

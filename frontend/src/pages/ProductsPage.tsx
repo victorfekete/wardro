@@ -169,6 +169,15 @@ function ProductsPage() {
               Cart
             </Link>
 
+            {authUser && (
+              <Link
+                to="/my-orders"
+                className="rounded-xl border border-neutral-800 px-4 py-2 font-medium text-neutral-300 hover:bg-neutral-900"
+              >
+                My Orders
+              </Link>
+            )}
+
             {authUser ? (
               <button
                 type="button"
@@ -189,6 +198,8 @@ function ProductsPage() {
               </Link>
             )}
           </div>
+
+
         </div>
 
         <form
