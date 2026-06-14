@@ -93,6 +93,8 @@ if (!isAdmin()) {
   }
 
   return (
+      <>
+      <Navbar/>
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex items-start justify-between gap-6">
@@ -209,6 +211,7 @@ if (!isAdmin()) {
         )}
       </div>
     </main>
+    </>
   )
 }
 

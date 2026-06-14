@@ -9,7 +9,7 @@ import {
   updateCartItemQuantity,
 } from "../utils/cartStorage"
 import { isAuthenticated } from "../utils/authStorage"
-
+import Navbar from "../components/Navbar"
 
 function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -25,6 +25,11 @@ function CartPage() {
     (total, item) => total + item.product.price * item.quantity,
     0
   )
+
+   const totalItems = cartItems.reduce(
+     (total, item) => total + item.quantity,
+     0
+   )
 
   function handleRemove(productId: number) {
     removeProductFromCart(productId)
@@ -74,6 +79,8 @@ function CartPage() {
 
   if (cartItems.length === 0) {
     return (
+        <>
+        <Navbar />
       <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 px-6 text-white">
         <h1 className="text-4xl font-bold">Your cart is empty</h1>
 
@@ -88,10 +95,13 @@ function CartPage() {
           Browse products
         </Link>
       </main>
+      </>
     )
   }
 
   return (
+      <>
+      <Navbar />
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex items-center justify-between">
@@ -192,7 +202,7 @@ function CartPage() {
             <div className="mt-6 space-y-3 text-sm text-neutral-300">
               <div className="flex justify-between">
                 <span>Items</span>
-                <span>{cartItems.length}</span>
+                <span>{totalItems}</span>
               </div>
 
               <div className="flex justify-between">
@@ -228,6 +238,7 @@ function CartPage() {
         </div>
       </div>
     </main>
+    </>
   )
 }
 
