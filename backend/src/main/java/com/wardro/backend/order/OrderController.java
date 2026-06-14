@@ -30,10 +30,14 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderResponse getOrderById(@PathVariable Long id) {
-        return orderService.getOrderById(id);
-    }
+    public OrderResponse getOrderById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        AppUser user = (AppUser) authentication.getPrincipal();
 
+        return orderService.getOrderByIdForUser(id, user);
+    }
     @PostMapping
     public OrderResponse createOrder(
             @Valid @RequestBody OrderRequest request,

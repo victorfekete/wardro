@@ -121,6 +121,20 @@ public class OrderService {
         );
     }
 
+    public OrderResponse getOrderByIdForUser(Long id, AppUser user) {
+        Order order = findOrderById(id);
+
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        if (!isAdmin) {
+            if (order.getUser() == null || !order.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("You are not allowed to view this order");
+            }
+        }
+
+        return mapToResponse(order);
+    }
+
     private OrderItemResponse mapItemToResponse(OrderItem item) {
         BigDecimal subtotal = item.getPriceAtPurchase()
                 .multiply(BigDecimal.valueOf(item.getQuantity()));
