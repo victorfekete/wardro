@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProductsPage from "./pages/ProductsPage"
 import ProductDetailsPage from "./pages/ProductDetailsPage"
 import CartPage from "./pages/CartPage"
@@ -8,12 +8,13 @@ import AdminProductsPage from "./pages/AdminProductsPage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import MyOrdersPage from "./pages/MyOrdersPage"
+import HomePage from "./pages/HomePage"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/products" replace />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetailsPage />} />
         <Route path="/cart" element={<CartPage />} />

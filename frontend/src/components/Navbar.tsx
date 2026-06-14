@@ -14,7 +14,7 @@ function Navbar() {
   return (
     <header className="border-b border-neutral-900 bg-neutral-950 px-6 py-4 text-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
-        <Link to="/products" className="text-lg font-bold tracking-[0.3em]">
+        <Link to="/" className="text-lg font-bold tracking-[0.3em]">
           WARDRO
         </Link>
 
