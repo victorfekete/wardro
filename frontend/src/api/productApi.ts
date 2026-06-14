@@ -1,5 +1,6 @@
 import type { Product } from "../types/Product"
 import type { ProductPage } from "../types/ProductPage"
+import { getAuthToken } from "../utils/authStorage"
 
 const API_URL = "http://localhost:8080/api"
 

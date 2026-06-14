@@ -32,7 +32,7 @@ function ProductDetailsPage() {
 
 
     function handleAddToCart() {
-        if (!product) {
+        if (!product || product.stock ===0) {
             return
         }
 
@@ -52,7 +52,7 @@ function ProductDetailsPage() {
       <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 text-white">
         <p className="text-red-400">{error ?? "Product not found."}</p>
 
-        <div className="flex items-center justify-between">
+        <div className="mt-6 flex items-center gap-3">
           <Link
             to="/products"
             className="text-sm text-neutral-400 hover:text-white"
@@ -71,6 +71,15 @@ function ProductDetailsPage() {
     )
   }
 
+  const isOutOfStock = product.stock === 0
+
+  const stockLabel =
+    product.stock === 0
+      ? "Out of stock"
+      : product.stock <= 5
+        ? "Low stock"
+        : "In stock"
+
   return (
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
@@ -84,8 +93,11 @@ function ProductDetailsPage() {
         <div className="mt-8 grid gap-10 lg:grid-cols-2">
           <div className="overflow-hidden rounded-3xl bg-neutral-900">
             <img
-              src={product.imageUrl}
+              src={product.imageUrl || "/images/product-placeholder.jpg"}
               alt={product.name}
+              onError={(event) => {
+                event.currentTarget.src = "/images/product-placeholder.jpg"
+              }}
               className="h-full w-full object-cover"
             />
           </div>
@@ -103,6 +115,10 @@ function ProductDetailsPage() {
 
             <div className="mt-6 text-3xl font-bold">
               {product.price} lei
+            </div>
+
+            <div className="mt-4 inline-flex rounded-full border border-neutral-800 bg-neutral-900 px-4 py-2 text-sm text-neutral-300">
+              {stockLabel} · {product.stock} available
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-4">
@@ -129,9 +145,10 @@ function ProductDetailsPage() {
 
             <button
               onClick={handleAddToCart}
-              className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-neutral-950 hover:bg-neutral-200"
+              disabled={isOutOfStock}
+              className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-neutral-950 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Add to Cart
+              {isOutOfStock ? "Out of stock" : "Add to Cart"}
             </button>
           </section>
         </div>
