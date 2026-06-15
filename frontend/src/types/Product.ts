@@ -8,6 +8,7 @@ export type Product = {
   size: string
   stock: number
   imageUrl: string
+  active: boolean
   categoryId: number
   categoryName: string
 }

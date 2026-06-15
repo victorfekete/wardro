@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class ProductService {
             String sortBy,
             String sortDirection
     ) {
-        Specification<Product> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        Specification<Product> spec = ProductSpecification.isActive();
 
         spec = spec.and(ProductSpecification.hasSearch(search));
         spec = spec.and(ProductSpecification.hasCategory(categoryId));
@@ -66,6 +65,13 @@ public class ProductService {
                 productPage.getTotalPages(),
                 productPage.isLast()
         );
+    }
+
+    public List<ProductResponse> getAllProductsForAdmin() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private Sort createSort(String sortBy, String sortDirection) {
@@ -98,6 +104,7 @@ public class ProductService {
                 .size(request.size())
                 .stock(request.stock())
                 .imageUrl(request.imageUrl())
+                .active(true)
                 .category(category)
                 .build();
 
@@ -127,7 +134,8 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         Product product = findProductById(id);
-        productRepository.delete(product);
+        product.setActive(false);
+        productRepository.save(product);
     }
 
     private Product findProductById(Long id) {
@@ -146,6 +154,7 @@ public class ProductService {
                 product.getSize(),
                 product.getStock(),
                 product.getImageUrl(),
+                product.getActive(),
                 product.getCategory().getId(),
                 product.getCategory().getName()
         );

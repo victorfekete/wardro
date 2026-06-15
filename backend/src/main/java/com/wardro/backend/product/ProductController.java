@@ -42,6 +42,11 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/admin")
+    public List<ProductResponse> getAllProductsForAdmin() {
+        return productService.getAllProductsForAdmin();
+    }
+
     @GetMapping("/{id}")
     public ProductResponse getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
@@ -59,6 +64,8 @@ public class ProductController {
     ) {
         return productService.updateProduct(id, request);
     }
+
+
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {

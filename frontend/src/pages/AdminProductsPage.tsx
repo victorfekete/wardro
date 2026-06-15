@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import {
+    getAdminProducts,
   createProduct,
   deleteProduct,
-  getProducts,
   updateProduct,
 } from "../api/productApi"
 import { getCategories } from "../api/categoryApi"
@@ -58,11 +58,11 @@ function AdminProductsPage() {
       setLoading(true)
 
       const [productsData, categoriesData] = await Promise.all([
-        getProducts(),
+        getAdminProducts(),
         getCategories(),
       ])
 
-      setProducts(productsData.content)
+      setProducts(productsData)
       setCategories(categoriesData)
     } catch {
       setError("Could not load admin products data.")
@@ -135,7 +135,7 @@ function AdminProductsPage() {
   }
 
   async function handleDeleteProduct(productId: number) {
-    const confirmed = window.confirm("Are you sure you want to delete this product?")
+    const confirmed = window.confirm("Are you sure you want to deactivate this product?")
 
     if (!confirmed) {
       return
@@ -145,10 +145,14 @@ function AdminProductsPage() {
       await deleteProduct(productId)
 
       setProducts((currentProducts) =>
-        currentProducts.filter((product) => product.id !== productId)
+        currentProducts.map((product) =>
+          product.id === productId
+            ? { ...product, active: false }
+            : product
+        )
       )
     } catch {
-      setError("Could not delete product.")
+      setError("Could not deactivate product.")
     }
   }
 
@@ -387,6 +391,7 @@ function AdminProductsPage() {
                     <th className="py-3 pr-4">Price</th>
                     <th className="py-3 pr-4">Size</th>
                     <th className="py-3 pr-4">Stock</th>
+                    <th className="py-3 pr-4">Status</th>
                     <th className="py-3 pr-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -432,6 +437,18 @@ function AdminProductsPage() {
                         {product.stock}
                       </td>
 
+                      <td className="py-4 pr-4">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${
+                            product.active
+                              ? "bg-green-950 text-green-300"
+                              : "bg-red-950 text-red-300"
+                          }`}
+                        >
+                          {product.active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+
                       <td className="py-4 pr-4 text-right">
                         <div className="flex justify-end gap-3">
                           <button
@@ -441,12 +458,16 @@ function AdminProductsPage() {
                             Edit
                           </button>
 
-                          <button
-                            onClick={() => handleDeleteProduct(product.id)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            Delete
-                          </button>
+                          {product.active ? (
+                            <button
+                              onClick={() => handleDeleteProduct(product.id)}
+                              className="text-yellow-400 hover:text-yellow-300"
+                            >
+                              Deactivate
+                            </button>
+                          ) : (
+                            <span className="text-neutral-500">Deactivated</span>
+                          )}
                         </div>
                       </td>
                     </tr>

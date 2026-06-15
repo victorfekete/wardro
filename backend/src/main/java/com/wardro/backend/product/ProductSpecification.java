@@ -6,6 +6,11 @@ import java.math.BigDecimal;
 
 public class ProductSpecification {
 
+    public static Specification<Product> isActive() {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.isTrue(root.get("active"));
+    }
+
     public static Specification<Product> hasSearch(String search) {
         return (root, query, criteriaBuilder) -> {
             if (search == null || search.isBlank()) {

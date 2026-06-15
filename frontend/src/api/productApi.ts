@@ -138,3 +138,19 @@ export async function deleteProduct(productId: number): Promise<void> {
     throw new Error("Failed to delete product")
   }
 }
+
+export async function getAdminProducts(): Promise<Product[]> {
+  const token = getAuthToken()
+
+  const response = await fetch(`${API_URL}/products/admin`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch admin products")
+  }
+
+  return response.json()
+}
