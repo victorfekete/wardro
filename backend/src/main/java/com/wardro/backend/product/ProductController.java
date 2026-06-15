@@ -65,10 +65,13 @@ public class ProductController {
         return productService.updateProduct(id, request);
     }
 
-
-
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+
+    @PutMapping("/{id}/reactivate")
+    public ProductResponse reactivateProduct(@PathVariable Long id) {
+        return productService.reactivateProduct(id);
     }
 }

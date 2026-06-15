@@ -154,3 +154,20 @@ export async function getAdminProducts(): Promise<Product[]> {
 
   return response.json()
 }
+
+export async function reactivateProduct(productId: number): Promise<Product> {
+  const token = getAuthToken()
+
+  const response = await fetch(`${API_URL}/products/${productId}/reactivate`, {
+    method: "PUT",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to reactivate product")
+  }
+
+  return response.json()
+}

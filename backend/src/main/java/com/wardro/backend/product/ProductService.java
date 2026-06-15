@@ -138,6 +138,15 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public ProductResponse reactivateProduct(Long id) {
+        Product product = findProductById(id);
+        product.setActive(true);
+
+        Product reactivatedProduct = productRepository.save(product);
+
+        return mapToResponse(reactivatedProduct);
+    }
+
     private Product findProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));

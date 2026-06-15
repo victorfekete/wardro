@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import {
-    getAdminProducts,
+  getAdminProducts,
   createProduct,
   deleteProduct,
   updateProduct,
+  reactivateProduct,
 } from "../api/productApi"
 import { getCategories } from "../api/categoryApi"
 import type { Product } from "../types/Product"
@@ -142,6 +143,8 @@ function AdminProductsPage() {
     }
 
     try {
+      setError(null)
+
       await deleteProduct(productId)
 
       setProducts((currentProducts) =>
@@ -155,6 +158,28 @@ function AdminProductsPage() {
       setError("Could not deactivate product.")
     }
   }
+
+    async function handleReactivateProduct(productId: number) {
+      const confirmed = window.confirm("Are you sure you want to reactivate this product?")
+
+      if (!confirmed) {
+        return
+      }
+
+      try {
+        setError(null)
+
+        const reactivatedProduct = await reactivateProduct(productId)
+
+        setProducts((currentProducts) =>
+          currentProducts.map((product) =>
+            product.id === productId ? reactivatedProduct : product
+          )
+        )
+      } catch {
+        setError("Could not reactivate product.")
+      }
+    }
 
     function handleEditProduct(product: Product) {
       setEditingProductId(product.id)
@@ -240,7 +265,8 @@ function AdminProductsPage() {
               {editingProductId ? "Edit product" : "Add product"}
             </h2>
 
-                <form onSubmit={handleSubmitProduct} className="mt-6 space-y-4">              <div>
+                <form onSubmit={handleSubmitProduct} className="mt-6 space-y-4">
+                 <div>
                 <label className="text-sm text-neutral-400">Name</label>
                 <input
                   name="name"
@@ -406,8 +432,11 @@ function AdminProductsPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-14 w-12 overflow-hidden rounded-lg bg-neutral-800">
                             <img
-                              src={product.imageUrl}
+                              src={product.imageUrl || "/icons.svg"}
                               alt={product.name}
+                              onError={(event) => {
+                                event.currentTarget.src = "/icons.svg"
+                              }}
                               className="h-full w-full object-cover"
                             />
                           </div>
@@ -466,7 +495,12 @@ function AdminProductsPage() {
                               Deactivate
                             </button>
                           ) : (
-                            <span className="text-neutral-500">Deactivated</span>
+                            <button
+                              onClick={() => handleReactivateProduct(product.id)}
+                              className="text-green-400 hover:text-green-300"
+                            >
+                              Reactivate
+                            </button>
                           )}
                         </div>
                       </td>
