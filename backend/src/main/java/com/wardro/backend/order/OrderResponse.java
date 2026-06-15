@@ -12,6 +12,11 @@ public record OrderResponse(
         Long userId,
         String customerName,
         String customerEmail,
+        String deliveryFullName,
+        String deliveryPhone,
+        String deliveryAddress,
+        String deliveryCity,
+        String deliveryPostalCode,
+        String deliveryNotes,
         List<OrderItemResponse> items
-) {
-}
+) {}

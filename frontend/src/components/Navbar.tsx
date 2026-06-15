@@ -45,6 +45,13 @@ function Navbar() {
           {authUser?.role === "ADMIN" && (
             <>
               <Link
+                    to="/admin"
+                    className="rounded-xl border border-neutral-800 px-4 py-2 text-sm font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white"
+                  >
+                    Dashboard
+                  </Link>
+
+              <Link
                 to="/admin/products"
                 className="rounded-xl border border-neutral-800 px-4 py-2 text-sm font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white"
               >

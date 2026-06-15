@@ -41,6 +41,12 @@ public class OrderService {
                 .status(OrderStatus.PENDING)
                 .totalPrice(BigDecimal.ZERO)
                 .user(user)
+                .deliveryFullName(request.deliveryFullName())
+                .deliveryPhone(request.deliveryPhone())
+                .deliveryAddress(request.deliveryAddress())
+                .deliveryCity(request.deliveryCity())
+                .deliveryPostalCode(request.deliveryPostalCode())
+                .deliveryNotes(request.deliveryNotes())
                 .build();
 
 
@@ -125,6 +131,12 @@ public class OrderService {
                 order.getUser() != null ? order.getUser().getId() : null,
                 order.getUser() != null ? order.getUser().getFullName() : null,
                 order.getUser() != null ? order.getUser().getEmail() : null,
+                order.getDeliveryFullName(),
+                order.getDeliveryPhone(),
+                order.getDeliveryAddress(),
+                order.getDeliveryCity(),
+                order.getDeliveryPostalCode(),
+                order.getDeliveryNotes(),
                 items
         );
     }

@@ -1,10 +1,13 @@
+export type OrderStatus =
+  | "PENDING"
+  | "PAID"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED"
+
 export type OrderItemRequest = {
   productId: number
   quantity: number
-}
-
-export type OrderRequest = {
-  items: OrderItemRequest[]
 }
 
 export type OrderItemResponse = {
@@ -15,10 +18,34 @@ export type OrderItemResponse = {
   subtotal: number
 }
 
+export type CreateOrderRequest = {
+  deliveryFullName: string
+  deliveryPhone: string
+  deliveryAddress: string
+  deliveryCity: string
+  deliveryPostalCode: string
+  deliveryNotes: string
+  items: OrderItemRequest[]
+}
+
 export type OrderResponse = {
   id: number
   totalPrice: number
-  status: "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+  status: OrderStatus
   createdAt: string
+
+  userId: number | null
+  customerName: string | null
+  customerEmail: string | null
+
+  deliveryFullName: string | null
+  deliveryPhone: string | null
+  deliveryAddress: string | null
+  deliveryCity: string | null
+  deliveryPostalCode: string | null
+  deliveryNotes: string | null
+
   items: OrderItemResponse[]
 }
+
+export type Order = OrderResponse

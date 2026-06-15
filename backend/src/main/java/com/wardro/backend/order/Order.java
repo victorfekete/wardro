@@ -41,6 +41,18 @@ public class Order {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    private String deliveryFullName;
+
+    private String deliveryPhone;
+
+    private String deliveryAddress;
+
+    private String deliveryCity;
+
+    private String deliveryPostalCode;
+
+    private String deliveryNotes;
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();

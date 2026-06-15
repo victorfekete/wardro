@@ -18,6 +18,15 @@ function CartPage() {
    const [checkoutError, setCheckoutError] = useState<string | null>(null)
    const navigate = useNavigate()
 
+   const [deliveryForm, setDeliveryForm] = useState({
+     fullName: "",
+     phone: "",
+     address: "",
+     city: "",
+     postalCode: "",
+     notes: "",
+   })
+
   useEffect(() => {
     setCartItems(getCartItems())
   }, [])
@@ -62,6 +71,17 @@ function CartPage() {
     setCartItems(getCartItems())
   }
 
+    function handleDeliveryInputChange(
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) {
+      const { name, value } = event.target
+
+      setDeliveryForm((currentForm) => ({
+        ...currentForm,
+        [name]: value,
+      }))
+    }
+
    async function handleCheckout() {
      if (cartItems.length === 0) {
        return
@@ -71,6 +91,17 @@ function CartPage() {
          navigate("/login")
          return
      }
+
+    if (
+      !deliveryForm.fullName.trim() ||
+      !deliveryForm.phone.trim() ||
+      !deliveryForm.address.trim() ||
+      !deliveryForm.city.trim() ||
+      !deliveryForm.postalCode.trim()
+    ) {
+      setCheckoutError("Please complete the delivery details.")
+      return
+    }
 
      setCheckoutLoading(true)
      setCheckoutError(null)
@@ -111,6 +142,12 @@ function CartPage() {
        }
 
        const orderRequest = {
+         deliveryFullName: deliveryForm.fullName,
+         deliveryPhone: deliveryForm.phone,
+         deliveryAddress: deliveryForm.address,
+         deliveryCity: deliveryForm.city,
+         deliveryPostalCode: deliveryForm.postalCode,
+         deliveryNotes: deliveryForm.notes,
          items: cartItems.map((item) => ({
            productId: item.product.id,
            quantity: item.quantity,
@@ -185,6 +222,7 @@ function CartPage() {
                     src={item.product.imageUrl || "/icons.svg"}
                     alt={item.product.name}
                     onError={(event) => {
+                      event.currentTarget.onerror = null
                       event.currentTarget.src = "/icons.svg"
                     }}
                     className="h-full w-full object-cover"
@@ -262,6 +300,74 @@ function CartPage() {
                 </div>
               </div>
             ))}
+
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <h2 className="text-xl font-semibold">Delivery details</h2>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="text-sm text-neutral-400">Full name</label>
+                  <input
+                    name="fullName"
+                    value={deliveryForm.fullName}
+                    onChange={handleDeliveryInputChange}
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-neutral-400">Phone</label>
+                  <input
+                    name="phone"
+                    value={deliveryForm.phone}
+                    onChange={handleDeliveryInputChange}
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-sm text-neutral-400">Address</label>
+                  <input
+                    name="address"
+                    value={deliveryForm.address}
+                    onChange={handleDeliveryInputChange}
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-neutral-400">City</label>
+                  <input
+                    name="city"
+                    value={deliveryForm.city}
+                    onChange={handleDeliveryInputChange}
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-neutral-400">Postal code</label>
+                  <input
+                    name="postalCode"
+                    value={deliveryForm.postalCode}
+                    onChange={handleDeliveryInputChange}
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-sm text-neutral-400">Notes</label>
+                  <textarea
+                    name="notes"
+                    value={deliveryForm.notes}
+                    onChange={handleDeliveryInputChange}
+                    rows={3}
+                    placeholder="Optional delivery notes"
+                    className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2 text-white outline-none focus:border-white"
+                  />
+                </div>
+              </div>
+            </div>
           </section>
 
           <aside className="h-fit rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
