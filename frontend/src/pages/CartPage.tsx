@@ -10,6 +10,7 @@ import {
 } from "../utils/cartStorage"
 import { isAuthenticated } from "../utils/authStorage"
 import Navbar from "../components/Navbar"
+import { getProductById } from "../api/productApi"
 
 function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -31,12 +32,32 @@ function CartPage() {
      0
    )
 
+    const hasUnavailableItems = cartItems.some(
+      (item) => item.product.active === false || item.product.stock === 0
+    )
+
   function handleRemove(productId: number) {
     removeProductFromCart(productId)
     setCartItems(getCartItems())
   }
 
   function handleQuantityChange(productId: number, quantity: number) {
+    const cartItem = cartItems.find((item) => item.product.id === productId)
+
+    if (!cartItem) {
+      return
+    }
+
+    if (quantity < 1) {
+      removeProductFromCart(productId)
+      setCartItems(getCartItems())
+      return
+    }
+
+    if (quantity > cartItem.product.stock) {
+      return
+    }
+
     updateCartItemQuantity(productId, quantity)
     setCartItems(getCartItems())
   }
@@ -57,6 +78,38 @@ function CartPage() {
 
 
      try {
+       const latestProducts = await Promise.all(
+         cartItems.map((item) => getProductById(String(item.product.id)))
+       )
+
+       const unavailableProduct = latestProducts.find(
+         (product) => product.active === false || product.stock === 0
+       )
+
+       if (unavailableProduct) {
+         setCheckoutError(
+           `${unavailableProduct.name} is no longer available. Please remove it from your cart.`
+         )
+         return
+       }
+
+       const productWithNotEnoughStock = latestProducts.find((product) => {
+         const cartItem = cartItems.find((item) => item.product.id === product.id)
+
+         if (!cartItem) {
+           return false
+         }
+
+         return cartItem.quantity > product.stock
+       })
+
+       if (productWithNotEnoughStock) {
+         setCheckoutError(
+           `Not enough stock for ${productWithNotEnoughStock.name}. Please update your cart.`
+         )
+         return
+       }
+
        const orderRequest = {
          items: cartItems.map((item) => ({
            productId: item.product.id,
@@ -65,7 +118,6 @@ function CartPage() {
        }
 
        const createdOrder = await createOrder(orderRequest)
-
        clearCart()
        setCartItems([])
 
@@ -130,8 +182,11 @@ function CartPage() {
               >
                 <div className="h-28 w-24 overflow-hidden rounded-xl bg-neutral-800">
                   <img
-                    src={item.product.imageUrl}
+                    src={item.product.imageUrl || "/icons.svg"}
                     alt={item.product.name}
+                    onError={(event) => {
+                      event.currentTarget.src = "/icons.svg"
+                    }}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -149,6 +204,18 @@ function CartPage() {
                     <p className="mt-1 text-sm text-neutral-400">
                       {item.product.color} · {item.product.size}
                     </p>
+
+                    {item.product.active === false && (
+                      <p className="mt-2 text-sm text-red-400">
+                        This product is no longer available.
+                      </p>
+                    )}
+
+                    {item.product.stock === 0 && (
+                      <p className="mt-2 text-sm text-red-400">
+                        This product is out of stock.
+                      </p>
+                    )}
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
@@ -174,7 +241,8 @@ function CartPage() {
                             item.quantity + 1
                           )
                         }
-                        className="rounded-lg bg-neutral-800 px-3 py-1 hover:bg-neutral-700"
+                        disabled={item.quantity >= item.product.stock}
+                        className="rounded-lg bg-neutral-800 px-3 py-1 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         +
                       </button>
@@ -229,10 +297,14 @@ function CartPage() {
 
             <button
               onClick={handleCheckout}
-              disabled={checkoutLoading}
+              disabled={checkoutLoading || hasUnavailableItems}
               className="mt-6 w-full rounded-xl bg-white px-4 py-3 font-semibold text-neutral-950 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {checkoutLoading ? "Creating order..." : "Proceed to checkout"}
+              {checkoutLoading
+                ? "Creating order..."
+                : hasUnavailableItems
+                  ? "Unavailable items in cart"
+                  : "Proceed to checkout"}
             </button>
           </aside>
         </div>

@@ -32,13 +32,13 @@ function ProductDetailsPage() {
 
 
     function handleAddToCart() {
-        if (!product || product.stock ===0) {
-            return
-        }
+      if (!product || product.active === false || product.stock === 0) {
+        return
+      }
 
-    addProductToCart(product)
-    alert("Product added to cart.")
-  }
+      addProductToCart(product)
+      alert("Product added to cart.")
+    }
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
@@ -71,10 +71,13 @@ function ProductDetailsPage() {
     )
   }
 
+  const isInactive = product.active === false
   const isOutOfStock = product.stock === 0
+  const cannotAddToCart = isInactive || isOutOfStock
 
-  const stockLabel =
-    product.stock === 0
+  const stockLabel = isInactive
+    ? "Unavailable"
+    : product.stock === 0
       ? "Out of stock"
       : product.stock <= 5
         ? "Low stock"
@@ -145,10 +148,14 @@ function ProductDetailsPage() {
 
             <button
               onClick={handleAddToCart}
-              disabled={isOutOfStock}
+              disabled={cannotAddToCart}
               className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-neutral-950 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isOutOfStock ? "Out of stock" : "Add to Cart"}
+              {isInactive
+                ? "Product unavailable"
+                : isOutOfStock
+                  ? "Out of stock"
+                  : "Add to Cart"}
             </button>
           </section>
         </div>
