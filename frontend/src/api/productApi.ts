@@ -25,6 +25,8 @@ export type ProductFilters = {
   maxPrice?: string
   sortBy?: string
   sortDirection?: string
+  page?: number
+  pageSize?: number
 }
 
 export async function getProducts(
@@ -32,8 +34,8 @@ export async function getProducts(
 ): Promise<ProductPage> {
   const params = new URLSearchParams()
 
-  params.set("page", "0")
-  params.set("pageSize", "50")
+  params.set("page", String(filters.page ?? 0))
+  params.set("pageSize", String(filters.pageSize ?? 8))
 
   if (filters.search) {
     params.set("search", filters.search)

@@ -36,9 +36,15 @@ function ProductsPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [filters, setFilters] = useState<FilterState>(initialFilters)
 
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const pageSize = 10
+
   const [loading, setLoading] = useState(true)
   const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+
 
   useEffect(() => {
     loadInitialData()
@@ -49,11 +55,18 @@ function ProductsPage() {
       setLoading(true)
 
       const [productsData, categoriesData] = await Promise.all([
-        getProducts(),
+        getProducts({
+          page: 0,
+          pageSize,
+          sortBy: filters.sortBy,
+          sortDirection: filters.sortDirection,
+        }),
         getCategories(),
       ])
 
       setProducts(productsData.content)
+      setTotalPages(productsData.totalPages)
+      setCurrentPage(productsData.pageNumber)
       setCategories(categoriesData)
     } catch {
       setError("Could not load products.")
@@ -80,9 +93,15 @@ function ProductsPage() {
       setFiltering(true)
       setError(null)
 
-      const productsData = await getProducts(filters)
+      const productsData = await getProducts({
+        ...filters,
+        page: 0,
+        pageSize,
+      })
 
       setProducts(productsData.content)
+      setTotalPages(productsData.totalPages)
+      setCurrentPage(productsData.pageNumber)
     } catch {
       setError("Could not apply filters.")
     } finally {
@@ -96,15 +115,52 @@ function ProductsPage() {
       setError(null)
       setFilters(initialFilters)
 
-      const productsData = await getProducts(initialFilters)
+      const productsData = await getProducts({
+        ...initialFilters,
+        page: 0,
+        pageSize,
+      })
 
       setProducts(productsData.content)
+      setTotalPages(productsData.totalPages)
+      setCurrentPage(productsData.pageNumber)
     } catch {
       setError("Could not reset filters.")
     } finally {
       setFiltering(false)
     }
   }
+
+    async function handlePageChange(nextPage: number) {
+      if (nextPage < 0 || nextPage >= totalPages) {
+        return
+      }
+
+      try {
+        setFiltering(true)
+        setError(null)
+
+        const productsData = await getProducts({
+          ...filters,
+          page: nextPage,
+          pageSize,
+        })
+
+        setProducts(productsData.content)
+        setTotalPages(productsData.totalPages)
+        setCurrentPage(productsData.pageNumber)
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        })
+      } catch {
+        setError("Could not load page.")
+      } finally {
+        setFiltering(false)
+      }
+    }
+
 
   if (loading) {
     return (
@@ -290,6 +346,34 @@ function ProductsPage() {
             ))}
           </div>
         )}
+    {totalPages > 1 && (
+      <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-neutral-800 bg-neutral-900 p-4 sm:flex-row">
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 0 || filtering}
+          className="rounded-xl border border-neutral-700 px-5 py-2 font-medium text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <p className="text-sm text-neutral-400">
+          Page{" "}
+          <span className="font-medium text-white">{currentPage + 1}</span>{" "}
+          of{" "}
+          <span className="font-medium text-white">{totalPages}</span>
+        </p>
+
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage + 1 >= totalPages || filtering}
+          className="rounded-xl border border-neutral-700 px-5 py-2 font-medium text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    )}
       </div>
     </main>
     </>
