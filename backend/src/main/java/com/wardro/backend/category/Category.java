@@ -20,4 +20,9 @@ public class Category {
     @NotBlank
     @Column(nullable = false, unique = true)
     private String name;
+
+    private String description;
+
+    @Builder.Default
+    private Boolean active = true;
 }

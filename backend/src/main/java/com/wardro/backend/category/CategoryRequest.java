@@ -3,6 +3,8 @@ package com.wardro.backend.category;
 import jakarta.validation.constraints.NotBlank;
 
 public record CategoryRequest(
-        @NotBlank String name
-) {
-}
+        @NotBlank(message = "Category name is required")
+        String name,
+
+        String description
+) {}

@@ -15,6 +15,11 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @GetMapping("/admin")
+    public List<CategoryResponse> getAllCategoriesForAdmin() {
+        return categoryService.getAllCategoriesForAdmin();
+    }
+
     @GetMapping
     public List<CategoryResponse> getAllCategories() {
         return categoryService.getAllCategories();
@@ -41,5 +46,10 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
+    }
+
+    @PutMapping("/{id}/reactivate")
+    public CategoryResponse reactivateCategory(@PathVariable Long id) {
+        return categoryService.reactivateCategory(id);
     }
 }

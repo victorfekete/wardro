@@ -172,6 +172,22 @@ function AdminDashboardPage() {
                 Manage orders
               </Link>
             </div>
+
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <h2 className="text-xl font-semibold">Category management</h2>
+
+              <p className="mt-3 text-neutral-400">
+                Add, edit, deactivate and reactivate categories.
+              </p>
+
+              <Link
+                to="/admin/categories"
+                className="mt-5 inline-block rounded-xl bg-white px-5 py-3 font-medium text-neutral-950 hover:bg-neutral-200"
+              >
+                Manage categories
+              </Link>
+            </div>
+
           </section>
         </div>
       </main>

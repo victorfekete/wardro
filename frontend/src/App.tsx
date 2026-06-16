@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage"
 import MyOrdersPage from "./pages/MyOrdersPage"
 import HomePage from "./pages/HomePage"
 import AdminDashboardPage from "./pages/AdminDashboardPage"
+import AdminCategoriesPage from "./pages/AdminCategoriesPage"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
+        <Route path="/admin/categories" element={<AdminCategoriesPage />} />
       </Routes>
     </BrowserRouter>
   )
