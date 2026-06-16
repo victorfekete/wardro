@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { getOrderById } from "../api/orderApi"
 import type { OrderResponse } from "../types/Order"
+import LoadingState from "../components/LoadingState"
 
 const orderSteps = ["PENDING", "PAID", "SHIPPED", "DELIVERED"] as const
 
@@ -54,11 +55,7 @@ function OrderDetailsPage() {
   }, [id])
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Loading order...
-      </main>
-    )
+    return <LoadingState message="Loading order..." />
   }
 
   if (error || !order) {

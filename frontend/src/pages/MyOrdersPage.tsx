@@ -4,6 +4,7 @@ import { getMyOrders } from "../api/orderApi"
 import type { OrderResponse } from "../types/Order"
 import { isAuthenticated } from "../utils/authStorage"
 import Navbar from "../components/Navbar"
+import LoadingState from "../components/LoadingState"
 
 function MyOrdersPage() {
   const navigate = useNavigate()
@@ -31,11 +32,7 @@ function MyOrdersPage() {
   }, [navigate])
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Loading your orders...
-      </main>
-    )
+    return <LoadingState message="Loading your orders..." />
   }
 
   if (error) {

@@ -4,6 +4,7 @@ import { getOrders, updateOrderStatus } from "../api/orderApi"
 import type { OrderResponse, OrderStatus } from "../types/Order"
 import { isAdmin } from "../utils/authStorage"
 import Navbar from "../components/Navbar"
+import LoadingState from "../components/LoadingState"
 
 const orderStatuses: OrderStatus[] = [
   "PENDING",

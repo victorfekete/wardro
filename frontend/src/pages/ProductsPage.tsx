@@ -5,7 +5,8 @@ import ProductCard from "../components/ProductCard"
 import type { Category } from "../types/Category"
 import type { Product } from "../types/Product"
 import Navbar from "../components/Navbar"
-
+import LoadingState from "../components/LoadingState"
+import ErrorState from "../components/ErrorState"
 
 type FilterState = {
   search: string
@@ -163,18 +164,17 @@ function ProductsPage() {
 
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Loading products...
-      </div>
-    )
+    return <LoadingState message="Loading products..." />
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-red-400">
-        {error}
-      </div>
+      <ErrorState
+        title="Could not load products"
+        message={error}
+        linkTo="/"
+        linkLabel="Go home"
+      />
     )
   }
 

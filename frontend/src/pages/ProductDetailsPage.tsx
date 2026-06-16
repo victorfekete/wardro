@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom"
 import { getProductById } from "../api/productApi"
 import type { Product } from "../types/Product"
 import { addProductToCart } from "../utils/cartStorage"
+import Toast from "../components/Toast"
+import LoadingState from "../components/LoadingState"
 
 function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -10,6 +12,7 @@ function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) {
@@ -37,14 +40,11 @@ function ProductDetailsPage() {
       }
 
       addProductToCart(product)
-      alert("Product added to cart.")
+      setToastMessage("Product added to cart.")
     }
+
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Loading product...
-      </div>
-    )
+    return <LoadingState message="Loading products..." />
   }
 
   if (error || !product) {
@@ -84,6 +84,12 @@ function ProductDetailsPage() {
         : "In stock"
 
   return (
+      <>
+      <Toast
+        message={toastMessage}
+        type="success"
+        onClose={() => setToastMessage(null)}
+      />
     <main className="min-h-screen bg-neutral-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
         <Link
@@ -161,6 +167,7 @@ function ProductDetailsPage() {
         </div>
       </div>
     </main>
+    </>
   )
 }
 

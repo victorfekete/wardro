@@ -12,6 +12,7 @@ import type { Product } from "../types/Product"
 import type { Category } from "../types/Category"
 import { isAdmin } from "../utils/authStorage"
 import Navbar from "../components/Navbar"
+import LoadingState from "../components/LoadingState"
 
 type ProductFormState = {
   name: string
@@ -226,11 +227,7 @@ function AdminProductsPage() {
 
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-white">
-        Loading admin products...
-      </main>
-    )
+    return <LoadingState message="Loading admin products..." />
   }
 
   return (
