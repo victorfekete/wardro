@@ -4,7 +4,7 @@ import type {
   RegisterRequest,
 } from "../types/Auth"
 
-const API_URL = "http://localhost:8080/api"
+const API_URL = "/api"
 
 export async function login(
   loginRequest: LoginRequest

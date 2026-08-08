@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wardro-ingress
+  namespace: wardro
+
+spec:
+  ingressClassName: traefik
+
+  rules:
+    - host: wardro.local
+
+      http:
+        paths:
+
+          # Backend API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8080
+
+          # Frontend React
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80

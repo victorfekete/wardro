@@ -11,7 +11,6 @@ import {
 import { isAuthenticated } from "../utils/authStorage"
 import Navbar from "../components/Navbar"
 import { getProductById } from "../api/productApi"
-import LoadingState from "../components/LoadingState"
 
 
 function CartPage() {

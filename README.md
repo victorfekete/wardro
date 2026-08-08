@@ -20,7 +20,48 @@ The application allows users to browse products, filter items, add products to c
 
 **Backend:** Java, Spring Boot, Spring Security, JWT, Spring Data JPA, PostgreSQL, Maven
 **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Router
-**Tools:** Docker, Docker Compose, Postman, Git, GitHub
+**Deployment:** Docker, Kubernetes, Traefik
+**Tools:** Postman, Git, GitHub
+
+## Kubernetes
+
+The application is containerized with Docker and deployed to a Kubernetes cluster.
+
+The Kubernetes setup includes:
+
+* Backend, frontend and PostgreSQL Deployments
+* Kubernetes Services for communication between the application components
+* ConfigMaps for application configuration
+* Secrets for database credentials and JWT configuration
+* Traefik Ingress for external access
+* Spring Boot Actuator health endpoints
+* Liveness and readiness probes for the backend
+
+The main routing is:
+
+```text
+/       -> frontend
+/api    -> backend
+```
+
+The backend connects to PostgreSQL through the Kubernetes service:
+
+```text
+postgres-service:5432
+```
+
+## Project Structure
+
+```text
+wardro/
+├── backend/
+├── frontend/
+└── k8s/
+    ├── backend/
+    ├── frontend/
+    ├── postgres/
+    └── ingress.yaml
+```
 
 ## Demo Admin Account
 
@@ -66,4 +107,4 @@ http://localhost:8080
 
 ## Project Status
 
-This project is still a work in progress. Current features include product management, authentication, cart, checkout, order history and admin pages. Planned improvements include better UI polish, frontend pagination, product image upload, checkout details and deployment configuration.
+The application is functional and has been containerized and deployed to Kubernetes. The current Kubernetes setup includes application configuration, secrets, service discovery, external routing and backend health monitoring.

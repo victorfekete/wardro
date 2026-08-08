@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom"
 import { getMyOrders } from "../api/orderApi"
 import type { OrderResponse } from "../types/Order"
 import { isAuthenticated } from "../utils/authStorage"
-import Navbar from "../components/Navbar"
 import LoadingState from "../components/LoadingState"
 
 function MyOrdersPage() {

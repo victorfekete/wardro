@@ -1,10 +1,10 @@
-import type { OrderRequest, OrderResponse } from "../types/Order"
+import type { CreateOrderRequest, OrderResponse } from "../types/Order"
 import { getAuthToken } from "../utils/authStorage"
 
-const API_URL = "http://localhost:8080/api"
+const API_URL = "/api"
 
 export async function createOrder(
-  orderRequest: OrderRequest
+  orderRequest: CreateOrderRequest
 ): Promise<OrderResponse> {
   const token = getAuthToken()
 

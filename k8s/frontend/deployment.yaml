@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: wardro-frontend
+  namespace: wardro
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wardro-frontend
+
+  template:
+
+    metadata:
+      labels:
+        app: wardro-frontend
+
+    spec:
+      containers:
+        - name: frontend
+
+          image: feketevictor/wardro-frontend:v2
+
+          ports:
+            - containerPort: 80

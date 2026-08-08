@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: wardro-backend
+  namespace: wardro
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: wardro-backend
+
+  template:
+    metadata:
+      labels:
+        app: wardro-backend
+
+    spec:
+      containers:
+        - name: backend
+          image: feketevictor/wardro-backend:v4
+
+          ports:
+            - containerPort: 8080
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+          env:
+
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: SPRING_DATASOURCE_URL
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: JWT_SECRET
+
+            - name: JWT_EXPIRATION
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: JWT_EXPIRATION
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: SPRING_PROFILES_ACTIVE
+
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: SERVER_PORT
