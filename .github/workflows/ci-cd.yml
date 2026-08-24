@@ -99,11 +99,11 @@ jobs:
     steps:
       - name: Deploy to k3s
         run: |
-          kubectl set image deployment/backend-deployment \
+          kubectl set image deployment/wardro-backend \
             backend=feketevictor/wardro-backend:${{ github.sha }} \
             -n wardro
-          kubectl set image deployment/frontend-deployment \
+          kubectl set image deployment/wardro-frontend \
             frontend=feketevictor/wardro-frontend:${{ github.sha }} \
             -n wardro
-          kubectl rollout status deployment/backend-deployment -n wardro
-          kubectl rollout status deployment/frontend-deployment -n wardro
+          kubectl rollout status deployment/wardro-backend -n wardro
+          kubectl rollout status deployment/wardro-frontend -n wardro
